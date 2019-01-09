@@ -12,6 +12,17 @@
             height: 0px;
             margin:0%;
         }
+		.match1{
+            padding: 20px;
+            font-size: 400%;
+			text-align: right;
+		}
+		.match2{
+			float:left;
+            padding: 20px;
+            font-size: 400%;
+			text-align: left;
+		}
         .col{
             float: left;
             margin:1%;
@@ -31,12 +42,12 @@
             padding: 20px;
         }
         .set1{
-            font-size: 400%;
+            font-size: 600%;
             text-align:right;
             padding: 20px;
         }
         .set2{
-            font-size: 400%;
+            font-size: 600%;
             text-align:left;
             padding: 20px;
         }
@@ -50,10 +61,26 @@
             text-align:right;
             padding: 20px;
         }
-        .teams{
+		.teams{
             font-size: 250%;
             text-align:center;
+			margin: auto;
             padding: 20px;
+            float: left;
+        }
+        .team1{
+            font-size: 250%;
+            text-align:center;
+			margin: auto;
+            padding: 20px;
+            float: left;
+        }
+		.team2{
+            font-size: 250%;
+            text-align:right;
+			width:82%;
+			padding: 20px;
+            float: left;
         }
         .bottom{
             width:18%;
@@ -90,8 +117,8 @@
     </div>
     <div id="semafor" class="hidden">
     <div class="row">
-        <div class="col"><div class="teams" id="klub1">Team 1</div></div>
-        <div class="col _1"><div class="teams" id="klub2">Team 2</div></div>
+        <div class="col"><div class="team1" id="klub1">Team 1</div><div class="match1" id="match1">0</div></div>
+        <div class="col _1"><div class="match2" id="match2">0</div><div class="team2" id="klub2">Team 2</div></div>
     </div>
     <div class="row">
         <div class="col score"><div class="names1" id="team1">Jupek<br>Mamić</div><div class="set1" id="set1">0</div><div class="game" id="game1">0</div><div class="ser1" id="ser1">servis</div></div>
@@ -124,6 +151,8 @@
             document.getElementById("semafor").classList.remove("hidden");
             
             var index = 0;
+			var scoreMatch1=0;
+			var scoreMatch2=0;
             var scoreGame1=0;
             var scoreSet1=0;
             var scoreGame2=0;
@@ -136,12 +165,14 @@
             var klub2 = document.getElementById("klub2");
             var team1 = document.getElementById("team1");
             var team2 = document.getElementById("team2");
+			var match1 = document.getElementById("match1");
+			var match2 = document.getElementById("match2");
 
             function match(){
-                klub1.innerHTML = timovi[index][0];
-                klub2.innerHTML = timovi[index+1][0];
-                team1.innerHTML = timovi[index][1]+"<br>"+(timovi[index][2] || "");
-                team2.innerHTML = timovi[index+1][1]+"<br>"+(timovi[index+1][2] || "");
+                klub1.innerHTML = timovi[0][0];
+                klub2.innerHTML = timovi[1][0];
+                team1.innerHTML = timovi[0][1]+"<br>"+(timovi[0][2] || "");
+                team2.innerHTML = timovi[1][1]+"<br>"+(timovi[1][2] || "");
 
                 requestAnimationFrame(match);
             }
@@ -149,27 +180,45 @@
 
             game1.addEventListener("click",function(event){
                 scoreGame1++;
-                if(scoreGame1>10 && Math.abs(scoreGame1-scoreGame2)>=2){
+                if(scoreGame1>11 && Math.abs(scoreGame1-scoreGame2)>2){
                     scoreGame1=0;
                     scoreGame2=0;
                     scoreSet1++;
                 }
+				if(scoreSet1>2){
+					scoreSet1=0;
+					scoreSet2=0;
+					scoreGame1=0;
+					scoreGame2=0;
+					scoreMatch1++;
+					}
                 game1.innerHTML = scoreGame1;
                 set1.innerHTML = scoreSet1;
                 game2.innerHTML = scoreGame2;
                 set2.innerHTML = scoreSet2;
+				match1.innerHTML = scoreMatch1;
+				match2.innerHTML = scoreMatch2;
             });
             game2.addEventListener("click",function(event){
                 scoreGame2++;
-                if(scoreGame2>10 && Math.abs(scoreGame1-scoreGame2)>=2){
+                if(scoreGame2>11 && Math.abs(scoreGame1-scoreGame2)>2){
                     scoreGame1=0;
                     scoreGame2=0;
                     scoreSet2++;
                 }
+				if(scoreSet2>2){
+					scoreSet1=0;
+					scoreSet2=0;
+					scoreGame1=0;
+					scoreGame2=0;
+					scoreMatch2++;
+					}
                 game1.innerHTML = scoreGame1;
                 set1.innerHTML = scoreSet1;
                 game2.innerHTML = scoreGame2;
                 set2.innerHTML = scoreSet2;
+				match1.innerHTML = scoreMatch1;
+				match2.innerHTML = scoreMatch2;
             });
         }
     </script>
