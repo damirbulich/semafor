@@ -62,10 +62,11 @@
         padding: 20px;
     }
 	.teams{
+        width: 100%;
         font-size: 250%;
         text-align:center;
-		margin: auto;
-        padding: 20px;
+		
+        padding: 20px 0px;
         float: left;
     }
     .team1{
@@ -100,6 +101,11 @@
     .input{
         margin:20px;
     }
+    .minus{
+        font-size: 400%;
+        padding: 0px;
+        margin: 0px;
+    }
     .hidden{
         display: none;
     }
@@ -126,9 +132,9 @@
     </div>
     <div class="row">
         <div class="col bottom"><div class="teams" id="TO1">Timeout</div></div>
-        <div class="col bottom"></div>
-        <div class="col bottom"><div class="teams" id="newgame">Slijedeći meč</div></div>
-        <div class="col bottom"></div>
+        <div class="col bottom"><div class="teams minus" id="min1">-</div></div>
+        <div class="col bottom"><div class="teams" id="newgame">Sljedeći meč</div></div>
+        <div class="col bottom"><div class="teams minus" id="min2">-</div></div>
         <div class="col bottom"><div class="teams" id="TO2">Timeout</div></div>
     </div>
     </div>
@@ -137,6 +143,8 @@
         
         var timovi = [];
         function inputIgrac () { 
+            document.getElementById("upis").classList.remove("hidden");
+            document.getElementById("semafor").classList.add("hidden");
             var klub = [document.formxml.imeKluba.value];
             var imena = document.formxml.imeIgraca.value;
             if (klub !="" && imena != ""){
@@ -151,12 +159,17 @@
             document.getElementById("semafor").classList.remove("hidden");
             
             var index = 0;
+            var minus1 = document.getElementById("min1");
+            var minus2 = document.getElementById("min2");
 			var scoreMatch1=0;
 			var scoreMatch2=0;
             var scoreGame1=0;
             var scoreSet1=0;
             var scoreGame2=0;
             var scoreSet2=0;
+            var tkoServira = false;
+            var servis1 = document.getElementById("ser1");
+            var servis2 = document.getElementById("ser2");
             var game1 = document.getElementById("game1");
             var game2 = document.getElementById("game2");
             var set1 = document.getElementById("set1");
@@ -167,23 +180,77 @@
             var team2 = document.getElementById("team2");
 			var match1 = document.getElementById("match1");
 			var match2 = document.getElementById("match2");
-
             function match(){
                 klub1.innerHTML = timovi[0][0];
                 klub2.innerHTML = timovi[1][0];
                 team1.innerHTML = timovi[0][1]+"<br>"+(timovi[0][2] || "");
                 team2.innerHTML = timovi[1][1]+"<br>"+(timovi[1][2] || "");
-
                 requestAnimationFrame(match);
             }
+            minus1.addEventListener("click",function(event){
+                scoreGame1--;
+                game1.innerHTML = scoreGame1;
+            })
+            minus2.addEventListener("click",function(event){
+                scoreGame2--;
+                game2.innerHTML = scoreGame2;
+            })
+            
+            servis1.addEventListener("click",function(event){
+                tkoServira=false;
+                servis2.classList.add("hidden")
+                servis1.classList.remove("hidden");
+            })
+            servis2.addEventListener("click",function(event){
+                tkoServira=true;
+                servis1.classList.add("hidden")
+                servis2.classList.remove("hidden");
+            })
+            function promijeniServis(){
+                if((scoreGame1+scoreGame2)%2==0 && (scoreGame1<11||scoreGame2<11)){
+                    if(servis1.classList.contains("hidden")){
+                        servis1.classList.remove("hidden");
+                        servis2.classList.add("hidden");
+                    }
+                    
+                    else{
+                        servis2.classList.remove("hidden");
+                        servis1.classList.add("hidden");
+                    }
+                }
+                else if(scoreGame1>9 && scoreGame2>9){
+                    if(servis1.classList.contains("hidden")){
+                        servis1.classList.remove("hidden");
+                        servis2.classList.add("hidden");
+                    }
+                    
+                    else{
+                        servis2.classList.remove("hidden");
+                        servis1.classList.add("hidden");
+                    } 
+                }
+            }
+            
             match();
-
             game1.addEventListener("click",function(event){
                 scoreGame1++;
+                promijeniServis();
                 if(scoreGame1>11 && Math.abs(scoreGame1-scoreGame2)>2){
                     scoreGame1=0;
                     scoreGame2=0;
                     scoreSet1++;
+                    tkoServira=!tkoServira;
+                    if(!tkoServira){
+                        servis1.classList.remove("hidden");
+                        servis2.classList.add("hidden");
+                    }
+                    
+                    else{
+                        servis2.classList.remove("hidden");
+                        servis1.classList.add("hidden");
+                    }
+                        
+                    
                 }
 				if(scoreSet1>2){
 					scoreSet1=0;
@@ -191,6 +258,8 @@
 					scoreGame1=0;
 					scoreGame2=0;
 					scoreMatch1++;
+                    servis1.classList.remove("hidden");
+                    servis2.classList.remove("hidden");
 					}
                 game1.innerHTML = scoreGame1;
                 set1.innerHTML = scoreSet1;
@@ -201,10 +270,21 @@
             });
             game2.addEventListener("click",function(event){
                 scoreGame2++;
+                promijeniServis();
                 if(scoreGame2>11 && Math.abs(scoreGame1-scoreGame2)>2){
                     scoreGame1=0;
                     scoreGame2=0;
                     scoreSet2++;
+                    tkoServira=!tkoServira;
+                    if(!tkoServira){
+                        servis1.classList.remove("hidden");
+                        servis2.classList.add("hidden");
+                    }
+                    
+                    else{
+                        servis2.classList.remove("hidden");
+                        servis1.classList.add("hidden");
+                    }
                 }
 				if(scoreSet2>2){
 					scoreSet1=0;
@@ -212,6 +292,8 @@
 					scoreGame1=0;
 					scoreGame2=0;
 					scoreMatch2++;
+                    servis1.classList.remove("hidden");
+                    servis2.classList.remove("hidden");
 					}
                 game1.innerHTML = scoreGame1;
                 set1.innerHTML = scoreSet1;
